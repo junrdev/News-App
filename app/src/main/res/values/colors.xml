@@ -2,4 +2,24 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+<!--    custom colors-->
+    <color name="primary_white">#CAD5E2</color>
+    <color name="primary_grey">#758283</color>
+    <color name="secondary_grey">#242B2E</color>
+    <color name="light_pink">#E1A2B8</color>
+    <color name="primary_pink">#FF6666</color>
+    <color name="teak">#AF9D5A</color>
+    <color name="putty">#E5D68A</color>
+    <color name="porsche">#EDBF69</color>
+    <color name="elm">#1C8D73</color>
+    <color name="persian_blue">#2827CC</color>
+    <color name="cerulean">#12B0E8</color>
+    <color name="mattise">#207398</color>
+
+
+    <!--    gradients-->
+<!--    <color name="red_gradient">#FF4331 #D31A50</color>-->
+
+
 </resources>
