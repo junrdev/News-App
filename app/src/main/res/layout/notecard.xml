@@ -8,7 +8,13 @@
     android:elevation="8dp"
     android:padding="20dp"
     app:cardBackgroundColor="@color/persian_blue"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="8dp"
+
+    android:id="@+id/newsCard"
+
+    android:clickable="true"
+    android:focusable="true"
+    >
 
     <!--        title author description url url_to_image published_at content-->
 
