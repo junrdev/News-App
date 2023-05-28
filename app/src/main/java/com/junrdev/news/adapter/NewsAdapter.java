@@ -1,11 +1,13 @@
 package com.junrdev.news.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.junrdev.news.R;
@@ -17,8 +19,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
 
     private List<NewsModel> newsModelList;
 
-    public NewsAdapter(List<NewsModel> newsModels){
+    private HandleNewsViewClicked clickListener;
+
+    public NewsAdapter(List<NewsModel> newsModels, HandleNewsViewClicked handleNewsViewClicked){
         this.newsModelList = newsModels;
+        this.clickListener = handleNewsViewClicked;
     }
     @NonNull
     @Override
@@ -34,6 +39,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
         holder.setTitle(_news.getTitle() == "null" ? "no title" : _news.getTitle());
         holder.setDescription(_news.getDescription() == "null" ? "no description" : _news.getDescription());
         holder.setPublish_date(_news.getPublicationDate() == "null" ? "no date" : _news.getPublicationDate());
+
+        holder.getNoteCard().setOnClickListener( v->{
+            clickListener.onItemClicked(position);
+            Log.d("TAG", "onBindViewHolder: note"+position);
+        });
     }
 
 
@@ -45,6 +55,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
 
 class NewsViewHolder extends RecyclerView.ViewHolder{
 
+    private CardView noteCard;
     private TextView title;
 
     private TextView author;
@@ -59,6 +70,12 @@ class NewsViewHolder extends RecyclerView.ViewHolder{
         author = itemView.findViewById(R.id.newsAuthor);
         publish_date= itemView.findViewById(R.id.publicationDate);
         description= itemView.findViewById(R.id.newsDescription);
+
+        noteCard = itemView.findViewById(R.id.newsCard);
+    }
+
+    public CardView getNoteCard() {
+        return noteCard;
     }
 
     public TextView getTitle() {
