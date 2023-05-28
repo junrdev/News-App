@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.junrdev.news.adapter.HandleNewsViewClicked;
 import com.junrdev.news.adapter.NewsAdapter;
 import com.junrdev.news.databinding.ActivityMainBinding;
 import com.junrdev.news.model.NewsModel;
@@ -129,7 +131,23 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false));
-                                    newsRecyclerView.setAdapter(new NewsAdapter(allNews));
+                                    newsRecyclerView.setAdapter(new NewsAdapter(allNews, new HandleNewsViewClicked() {
+                                        @Override
+                                        public void onItemClicked(int position) {
+                                            NewsModel _current_news = allNews.get(position);
+
+                                            Intent _forward_news_intent = new Intent(MainActivity.this, SingleNoteView.class);
+                                            _forward_news_intent.putExtra("title", _current_news.getTitle());
+                                            _forward_news_intent.putExtra("author", _current_news.getAuthor());
+                                            _forward_news_intent.putExtra("publication_date", _current_news.getPublicationDate());
+                                            _forward_news_intent.putExtra("description", _current_news.getDescription());
+                                            _forward_news_intent.putExtra("content", _current_news.getContent());
+                                            _forward_news_intent.putExtra("url", _current_news.getUrl());
+                                            _forward_news_intent.putExtra("url_to_image", _current_news.getUrlToImage());
+
+                                            startActivity(_forward_news_intent);
+                                        }
+                                    }));
                                     progressDialog.dismiss();
                                     homeAppLogo.setVisibility(View.GONE);
                                 }
@@ -172,6 +190,18 @@ public class MainActivity extends AppCompatActivity {
         _temp.add(new NewsModel("Title 1", "" + new Date(System.currentTimeMillis()).toString(), "Brian Kidiga", "This is a test News Item", "Hello world", "google.com", "google.com/img.png"));
         _temp.add(new NewsModel("Title 1", "" + new Date(System.currentTimeMillis()).toString(), "Brian Kidiga", "This is a test News Item", "Hello world", "google.com", "google.com/img.png"));
         return _temp;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        allNews=new ArrayList<>();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+//        allNews=new ArrayList<>();
     }
 
 }
