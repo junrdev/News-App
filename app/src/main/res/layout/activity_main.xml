@@ -4,17 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/secondary_grey">
+    android:background="@color/secondary_grey"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="10dp"
+        android:id="@+id/searchItem"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            >
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:elevation="4dp"
+                android:layout_marginEnd="40dp"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/searchText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/nunitoitalic"
+                    android:hint="Ballon' dor"
+                    android:textColor="@color/primary_white"
+                    android:ems="1"
+
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/searchIcon"
+                android:clickable="true"
+                android:focusable="true"
+
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/baseline_search_24"
+                android:paddingTop="22dp"
+
+                android:paddingStart="20dp"
+                />
+        </RelativeLayout>
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
         android:layout_centerInParent="true"
-        android:textColor="@color/white"
         android:fontFamily="@font/nunitovariablefontwght"
-        android:textSize="30sp"
-        />
+        android:text="News App"
+
+        android:id="@+id/newsAppLogo"
+
+        android:textColor="@color/white"
+        android:textSize="30sp" />
+
+
+    <include
+        layout="@layout/newsview"
+        android:layout_below="@id/searchItem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>
