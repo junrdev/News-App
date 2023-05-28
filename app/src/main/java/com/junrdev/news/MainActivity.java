@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -35,7 +36,8 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String defaultUrl = "https://newsapi.org/v2/everything?q=bitcoin&apiKey=220fd65e064342a893d98e887cb22f8c";
+    private final String apikey = "&apiKey=220fd65e064342a893d98e887cb22f8c";
+    private final String defaultUrl = "https://newsapi.org/v2/everything?q=";
     private ActivityMainBinding binding;
 
     private ProgressDialog progressDialog;
@@ -45,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private List<NewsModel> allNews = new ArrayList<>();
 
     private TextView homeAppLogo;
+
+    private String[] random_categories = new String[]{
+            "bitcoin",
+            "tesla",
+            "apple"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +67,15 @@ public class MainActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("Loading please wait....");
+        progressDialog.show();
+
+        String topic=getRandomTopic();
+
+        Toast.makeText(this, "Fetching about "+ topic, Toast.LENGTH_SHORT).show();
 
         OkHttpClient client = new OkHttpClient();
 
-        Request request = new Request.Builder().url(defaultUrl).build();
+        Request request = new Request.Builder().url(defaultUrl+topic+apikey).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -86,25 +99,29 @@ public class MainActivity extends AppCompatActivity {
 
                         JSONArray articles = response_object.getJSONArray("articles");
 
-                        int noOfArticles = response_object.getInt("totalResults");
+                        int k=0,i;
 
-//                            Toast.makeText(MainActivity.this, "fetched " + noOfArticles + "Articles", Toast.LENGTH_SHORT).show();
+                        Log.d("Resp", "onResponse: "+articles.length());
 
-                        for (int i = 0, k=0; i < 100 && k< noOfArticles; i++) {
-                            
-                            JSONObject _article_json = articles.getJSONObject(i);
+                        while(k< articles.length()){
 
-                            allNews.add(
-                                    new NewsModel(
-                                            _article_json.getString("title"),
-                                            _article_json.getString("publishedAt"),
-                                            _article_json.getString("author"),
-                                            _article_json.getString("description"),
-                                            _article_json.getString("content"),
-                                            _article_json.getString("url"),
-                                            _article_json.getString("urlToImage")
-                                    ));
+                            for (i = 0; i < 100; i++, k++) {
 
+                                JSONObject _article_json = articles.getJSONObject(k);
+
+                                allNews.add(
+                                        new NewsModel(
+                                                _article_json.getString("title"),
+                                                _article_json.getString("publishedAt"),
+                                                _article_json.getString("author"),
+                                                _article_json.getString("description"),
+                                                _article_json.getString("content"),
+                                                _article_json.getString("url"),
+                                                _article_json.getString("urlToImage")
+                                        ));
+
+                            }
+                            k=i;
                         }
 
                         if (!allNews.isEmpty()) {
@@ -113,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void run() {
                                     newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false));
                                     newsRecyclerView.setAdapter(new NewsAdapter(allNews));
+                                    progressDialog.dismiss();
                                     homeAppLogo.setVisibility(View.GONE);
                                 }
                             });
@@ -140,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    private String getRandomTopic(){
+        return random_categories[new Random().nextInt() % random_categories.length];
+    }
     private List<NewsModel> getNews() {
 
         List<NewsModel> _temp = new ArrayList<>();
