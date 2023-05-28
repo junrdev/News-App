@@ -71,13 +71,36 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading please wait....");
         progressDialog.show();
 
-        String topic=getRandomTopic();
+        String topic = getRandomTopic();
 
-        Toast.makeText(this, "Fetching about "+ topic, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Fetching about " + topic, Toast.LENGTH_SHORT).show();
+
+        fetch(getRandomTopic());
+
+        binding.searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(binding.searchText.getText())) {
+
+                    newsRecyclerView.setAdapter(null);
+
+                    progressDialog.show();
+                    fetch(binding.searchText.getText().toString());
+                } else
+                    Toast.makeText(MainActivity.this, "Please add search text", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void fetch(String topic) {
+        allNews = new ArrayList<>();
 
         OkHttpClient client = new OkHttpClient();
 
-        Request request = new Request.Builder().url(defaultUrl+topic+apikey).build();
+        String url = defaultUrl + topic + apikey;
+        Log.d("URL", "fetch: url ->" + url);
+        Request request = new Request.Builder().url(url).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -101,29 +124,25 @@ public class MainActivity extends AppCompatActivity {
 
                         JSONArray articles = response_object.getJSONArray("articles");
 
-                        int k=0,i;
+                        int k = 0, i;
 
-                        Log.d("Resp", "onResponse: "+articles.length());
+                        Log.d("Resp", "onResponse: " + articles.length());
 
-                        while(k< articles.length()){
+                        for (i = 0; i < articles.length(); i++, k++) {
 
-                            for (i = 0; i < 100; i++, k++) {
+                            JSONObject _article_json = articles.getJSONObject(i);
 
-                                JSONObject _article_json = articles.getJSONObject(k);
+                            allNews.add(
+                                    new NewsModel(
+                                            _article_json.getString("title"),
+                                            _article_json.getString("publishedAt"),
+                                            _article_json.getString("author"),
+                                            _article_json.getString("description"),
+                                            _article_json.getString("content"),
+                                            _article_json.getString("url"),
+                                            _article_json.getString("urlToImage")
+                                    ));
 
-                                allNews.add(
-                                        new NewsModel(
-                                                _article_json.getString("title"),
-                                                _article_json.getString("publishedAt"),
-                                                _article_json.getString("author"),
-                                                _article_json.getString("description"),
-                                                _article_json.getString("content"),
-                                                _article_json.getString("url"),
-                                                _article_json.getString("urlToImage")
-                                        ));
-
-                            }
-                            k=i;
                         }
 
                         if (!allNews.isEmpty()) {
@@ -162,24 +181,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-        binding.searchIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!TextUtils.isEmpty(binding.searchText.getText())) {
-//                    Toast.makeText(MainActivity.this, " " + binding.searchText.getText(), Toast.LENGTH_SHORT).show();
-                    progressDialog.show();
-                } else
-                    Toast.makeText(MainActivity.this, "Please add search text", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
-
-    private String getRandomTopic(){
-        return random_categories[new Random().nextInt() % random_categories.length];
+    private String getRandomTopic() {
+        return random_categories[new Random().nextInt(random_categories.length) % random_categories.length];
     }
+
     private List<NewsModel> getNews() {
 
         List<NewsModel> _temp = new ArrayList<>();
@@ -195,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        allNews=new ArrayList<>();
+        allNews = new ArrayList<>();
     }
 
     @Override
